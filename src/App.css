@@ -52,3 +52,7 @@
 .active {
   border: solid 3px black;
 }
+
+.icon-hover:hover {
+  color: red;
+}
