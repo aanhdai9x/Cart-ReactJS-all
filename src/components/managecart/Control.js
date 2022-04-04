@@ -7,10 +7,12 @@ class Control extends Component {
         return(
             <div>
                 {/*Search*/}
-                <Search />
+                <Search onSearch={this.props.onSearch}/>
 
                 {/*Sort*/}
-                <Sort />
+                <Sort 
+                    onSort={this.props.onSort}
+                />
             </div>
         );
     }

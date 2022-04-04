@@ -4,51 +4,99 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import TaskForm from './managecart/TaskForm'
 import Control from './managecart/Control'
 import TaskList from './managecart/TaskList'
-import randomString from 'random-string'
+import {connect} from "react-redux";
+import * as actions from './../actions/index'
 
 class ManageCart extends Component {
     constructor(props){
         super(props);
         this.state = {
-            tasks: [],      //id: unique, name, status
-            isDisplayForm: false
-        }
-    }
-
-    componentWillMount() {
-        if(localStorage && localStorage.getItem('tasks')){
-            var tasks = JSON.parse(localStorage.getItem('tasks'));
-            this.setState({
-                tasks: tasks,
-            });
+            taskEditing: null,
+            filter: {
+                name: '',
+                status: -1,
+            }, 
+            keyword: '',
+            sortBy: 'name',
+            sortValue: 1,
         }
     }
 
     onToggleForm = () => {
+        var {itemEditing} = this.props;
+        if(itemEditing && itemEditing.id !== ''){
+            this.props.onEditThenAdd()
+            this.props.onOpenForm();
+        } else {
+            this.props.onToggleForm();
+        }
+    }
+
+    onFilter = (filterName, filterStatus) => {
+        filterStatus = parseInt(filterStatus);
         this.setState({
-            isDisplayForm: !this.state.isDisplayForm,
+            filter: {
+                name: filterName,
+                status: filterStatus,
+            }
         });
     }
 
-    onCloseForm = () => {
+    onSearch = (keyword) => {
         this.setState({
-            isDisplayForm: false,
+            keyword: keyword,
         });
     }
 
-    onSubmit = (data) => {
-        var {tasks} = this.state;
-        data.id = randomString({length: 50});
-        tasks.push(data);
+    onSort = (sortBy, sortValue) => {
         this.setState({
-            tasks : tasks
+            sortBy: sortBy,
+            sortValue: sortValue,
         });
-        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
     render(){
-        var {tasks, isDisplayForm} = this.state;
-        var elementTaskForm = isDisplayForm ? <TaskForm onSubmit={this.onSubmit} onCloseForm={ () => this.onCloseForm()} /> : '';
+        var {isDisplayForm} = this.props;
+        var {
+            taskEditing,
+            filter,
+                // keyword,
+            sortBy,
+            sortValue
+        } = this.state;
+        // if(filter){
+        //     if(filter.name){
+        //         tasks = tasks.filter((task) => {
+        //             return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1;
+        //         });
+        //     }
+        //     tasks = tasks.filter((task) => {
+        //         if(filter.status === -1){
+        //             return task;
+        //         } else {
+        //             return task.status === (filter.status === 1 ? true: false);
+        //         }
+        //     });
+        // }
+        // if(keyword){
+        //     tasks = tasks.filter((task) => {
+        //         return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+        //     });
+        // }
+        // if(sortBy ==='name'){
+        //     tasks.sort((a, b) => {
+        //        if(a.name > b.name) return sortValue;
+        //        else if (a.name <b.name) return -sortValue;
+        //        else return 0;
+        //     });
+        // } else {
+        //     tasks.sort((a, b) => {
+        //         if(a.status > b.status) return -sortValue;
+        //         else if (a.status < b.status) return sortValue;
+        //         else return 0;
+        //     });
+        // }
+
         return(
             <div className="container">
                 <div className="text-center">
@@ -59,7 +107,7 @@ class ManageCart extends Component {
                         className={isDisplayForm ? "col-xs-4 col-sm-4 col-md-4 col-lg-4" : ""}
                     >
                         {/*Form*/}
-                        {elementTaskForm}
+                        <TaskForm />
                     </div>
                     <div 
                         className={isDisplayForm ? "col-xs-8 col-sm-8 col-md-8 col-lg-8 text-left" : "col-xs-12 col-sm-12 col-md-12 col-lg-12 text-left"}
@@ -67,7 +115,7 @@ class ManageCart extends Component {
                         <button
                             type="button" 
                             className="btn btn-primary"
-                            onClick={ () => this.onToggleForm() }
+                            onClick={ this.onToggleForm }
                         >
                             <FontAwesomeIcon icon={faPlus} />&nbsp;
                             Thêm sản phẩm
@@ -75,13 +123,18 @@ class ManageCart extends Component {
                         <br/><br/>
 
                         {/*Control*/}
-                        <Control />
+                        <Control 
+                            onSearch={this.onSearch}
+                            onSort={this.onSort}
+                        />
 
                         <br/>
                         <br/>
 
                         {/*TaskList*/}
-                        <TaskList tasks={tasks}/>
+                        <TaskList
+                            onFilter={this.onFilter}
+                        />
                     </div>
                 </div>
             </div>
@@ -89,4 +142,25 @@ class ManageCart extends Component {
     }
 }
 
-export default ManageCart;
+const mapStateToProps = (state) => {
+    return {
+        isDisplayForm: state.isDisplayForm,
+        itemEditing: state.itemEditing,
+    }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        onToggleForm: () => {
+            dispatch(actions.toggleForm());
+        },
+        onOpenForm: () => {
+            dispatch(actions.openForm());
+        },
+        onEditThenAdd: () => {
+            dispatch(actions.editThenAdd());
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageCart);

@@ -3,11 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import {connect} from "react-redux";
+import * as actions from './../../actions/index'
+
 
 class TaskForm extends Component {
     constructor(props){
         super(props);
         this.state = {
+            id: '',
             name: '',
             status: false
         }
@@ -26,7 +30,7 @@ class TaskForm extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.state);
+        this.props.onSaveTask(this.state);
         // Clear & Close Form
         this.onClear();
         this.props.onCloseForm();
@@ -39,9 +43,39 @@ class TaskForm extends Component {
         });
     }
 
+    componentWillMount(){
+        if(this.props.itemEditing && this.props.itemEditing.id !== null){
+            this.setState({
+                id: this.props.itemEditing.id,
+                name: this.props.itemEditing.name,
+                status: this.props.itemEditing.status,
+            });
+        } else {
+            this.onClear();
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps && nextProps.itemEditing){
+            this.setState({
+                id: nextProps.itemEditing.id,
+                name: nextProps.itemEditing.name,
+                status: nextProps.itemEditing.status,
+            });
+        } else if (!nextProps.itemEditing) {
+            this.setState({
+                id: '',
+                name: '',
+                status: false
+            });
+        }
+    }
+
 
 
     render(){
+        var {id} = this.state;
+        if(!this.props.isDisplayForm) return '';
         return(
             <div className="panel panel-warning">
                 <div className="panel-heading">
@@ -53,14 +87,16 @@ class TaskForm extends Component {
                             <FontAwesomeIcon
                                 className="icon-hover"
                                 icon={faCircleXmark}
-                                onClick={ () => this.props.onCloseForm() }
+                                onClick={this.props.onCloseForm}
                             />
                         </div>
                     </h3>
                 </div>
                 <div className="panel-body">
                     <form onSubmit={this.onSubmit}>
-                        <legend>Thêm sản phẩm</legend>
+                        <legend>
+                            {id === '' ? 'Thêm sản phẩm' : 'Cập nhật sản phẩm'}
+                        </legend>
                     
                         <div className="form-group text-left">
                             <label>Tên: </label>
@@ -107,4 +143,22 @@ class TaskForm extends Component {
     }
 }
 
-export default TaskForm;
+const mapStateToProps = state => {
+    return {
+        isDisplayForm: state.isDisplayForm,
+        itemEditing: state.itemEditing,
+    }
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        onSaveTask: (task) => {
+            dispatch(actions.saveTask(task));
+        },
+        onCloseForm: () => {
+            dispatch(actions.closeForm());
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);
