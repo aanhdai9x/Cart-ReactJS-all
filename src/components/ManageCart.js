@@ -59,25 +59,10 @@ class ManageCart extends Component {
         var {isDisplayForm} = this.props;
         var {
             taskEditing,
-            filter,
                 // keyword,
             sortBy,
             sortValue
         } = this.state;
-        // if(filter){
-        //     if(filter.name){
-        //         tasks = tasks.filter((task) => {
-        //             return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1;
-        //         });
-        //     }
-        //     tasks = tasks.filter((task) => {
-        //         if(filter.status === -1){
-        //             return task;
-        //         } else {
-        //             return task.status === (filter.status === 1 ? true: false);
-        //         }
-        //     });
-        // }
         // if(keyword){
         //     tasks = tasks.filter((task) => {
         //         return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
@@ -132,9 +117,7 @@ class ManageCart extends Component {
                         <br/>
 
                         {/*TaskList*/}
-                        <TaskList
-                            onFilter={this.onFilter}
-                        />
+                        <TaskList />
                     </div>
                 </div>
             </div>

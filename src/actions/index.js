@@ -57,3 +57,10 @@ export const editThenAdd = () => {
         type: types.EDIT_THEN_ADD,
     }
 }
+
+export const filterTable = (filter) => {
+    return {
+        type: types.FILTER_TABLE,
+        filter,
+    }
+}

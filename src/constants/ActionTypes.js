@@ -7,3 +7,4 @@ export const CHANGE_STATUS = 'CHANGE_STATUS';
 export const DELETE_TASK = 'DELETE_TASK';
 export const EDIT_TASK = 'EDIT_TASK';
 export const EDIT_THEN_ADD = 'EDIT_THEN_ADD';
+export const FILTER_TABLE = 'FILTER_TABLE';
