@@ -8,19 +8,6 @@ import {connect} from "react-redux";
 import * as actions from './../actions/index'
 
 class ManageCart extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            taskEditing: null,
-            filter: {
-                name: '',
-                status: -1,
-            }, 
-            keyword: '',
-            sortBy: 'name',
-            sortValue: 1,
-        }
-    }
 
     onToggleForm = () => {
         var {itemEditing} = this.props;
@@ -32,55 +19,8 @@ class ManageCart extends Component {
         }
     }
 
-    onFilter = (filterName, filterStatus) => {
-        filterStatus = parseInt(filterStatus);
-        this.setState({
-            filter: {
-                name: filterName,
-                status: filterStatus,
-            }
-        });
-    }
-
-    onSearch = (keyword) => {
-        this.setState({
-            keyword: keyword,
-        });
-    }
-
-    onSort = (sortBy, sortValue) => {
-        this.setState({
-            sortBy: sortBy,
-            sortValue: sortValue,
-        });
-    }
-
     render(){
         var {isDisplayForm} = this.props;
-        var {
-            taskEditing,
-                // keyword,
-            sortBy,
-            sortValue
-        } = this.state;
-        // if(keyword){
-        //     tasks = tasks.filter((task) => {
-        //         return task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
-        //     });
-        // }
-        // if(sortBy ==='name'){
-        //     tasks.sort((a, b) => {
-        //        if(a.name > b.name) return sortValue;
-        //        else if (a.name <b.name) return -sortValue;
-        //        else return 0;
-        //     });
-        // } else {
-        //     tasks.sort((a, b) => {
-        //         if(a.status > b.status) return -sortValue;
-        //         else if (a.status < b.status) return sortValue;
-        //         else return 0;
-        //     });
-        // }
 
         return(
             <div className="container">
@@ -108,10 +48,7 @@ class ManageCart extends Component {
                         <br/><br/>
 
                         {/*Control*/}
-                        <Control 
-                            onSearch={this.onSearch}
-                            onSort={this.onSort}
-                        />
+                        <Control />
 
                         <br/>
                         <br/>

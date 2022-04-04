@@ -4,26 +4,20 @@ import { faArrowDownWideShort as faSort } from '@fortawesome/free-solid-svg-icon
 import { faArrowDownAZ} from '@fortawesome/free-solid-svg-icons'
 import { faArrowDownZA} from '@fortawesome/free-solid-svg-icons'
 import { faCheck} from '@fortawesome/free-solid-svg-icons'
+import {connect} from "react-redux";
+import * as actions from './../../actions/index'
 
-class TaskForm extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            sortBy: 'name',
-            sortValue: 1,
-        }
-    }
+class Sort extends Component {
 
     onSort = (sortBy, sortValue) => {
-        this.setState({
-            sortBy: sortBy,
-            sortValue: sortValue,
+        this.props.onSortTask({
+            by: sortBy,
+            value: sortValue,
         });
-        this.props.onSort(sortBy, sortValue);
     }
 
     render(){
-        var {sortBy, sortValue} = this.state;
+        var  {sort} = this.props;
         return(
             <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div className="dropdown">
@@ -36,7 +30,7 @@ class TaskForm extends Component {
                         <a>
                             <FontAwesomeIcon icon={faArrowDownAZ} /> &nbsp;
                             Tên A-Z &nbsp;
-                            {(sortBy === 'name' && sortValue ===1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
+                            {(sort.by === 'name' && sort.value ===1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
                             
                         </a>
                     </li>
@@ -44,20 +38,20 @@ class TaskForm extends Component {
                         <a>
                             <FontAwesomeIcon icon={faArrowDownZA} /> &nbsp;
                             Tên Z-A &nbsp;
-                            {(sortBy === 'name' && sortValue === -1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
+                            {(sort.by === 'name' && sort.value === -1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
                         </a>
                     </li>
                     <li role="separator" className="divider"></li>
                     <li onClick={() =>this.onSort('status', 1)}>
                         <a>
                             Trạng thái kích hoạt &nbsp;
-                            {(sortBy === 'status' && sortValue ===1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
+                            {(sort.by === 'status' && sort.value ===1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
                         </a>
                     </li>
                     <li onClick={() =>this.onSort('status', -1)}>
                         <a>
                             Trạng thái ẩn &nbsp;
-                            {(sortBy === 'status' && sortValue === -1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
+                            {(sort.by === 'status' && sort.value === -1) ? <FontAwesomeIcon icon={faCheck} /> : ''}
                         </a>
                     </li>
                   </ul>
@@ -67,4 +61,18 @@ class TaskForm extends Component {
     }
 }
 
-export default TaskForm;
+const mapStateToProps = state => {
+    return {
+        sort: state.sortTask,
+    };
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        onSortTask: (sort) => {
+            dispatch(actions.sortTask(sort));
+        },
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sort);
